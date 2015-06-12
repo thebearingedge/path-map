@@ -1,22 +1,33 @@
 {
   "name": "path-map",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
-  "main": "index.js",
+  "main": "PathMap.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha",
+    "cover": "npm test --coverage && npm run coverage",
+    "tdd": "./node_modules/.bin/mocha -w -R min",
+    "coverage": "./node_modules/.bin/http-server coverage/lcov-report -sp 3000"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thebearingedge/path-map.git"
   },
-  "author": "",
+  "author": "Tim Davis",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/thebearingedge/path-map/issues"
   },
   "homepage": "https://github.com/thebearingedge/path-map#readme",
   "dependencies": {
-    "location-emitter": "^1.0.1"
+    "url-pattern": "^0.9.0"
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "http-server": "^0.8.0",
+    "istanbul": "^0.3.15",
+    "mocha": "^2.2.5",
+    "sinon": "^1.15.3",
+    "sinon-chai": "^2.8.0"
   }
 }
