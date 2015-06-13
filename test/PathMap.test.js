@@ -65,14 +65,17 @@ describe('PathMap', function () {
   });
 
 
-  describe('#match(route)', function () {
+  describe('#match(route, onMatch)', function () {
 
-    it('should return a keyed params object and the matched path', function () {
+    it('should call onMatch with route, params, and query', function () {
 
-      pm.add({ path: '/foo/:bar/baz?qux&quux' });
+      var onMatch = sinon.spy();
 
-      expect(pm.match('/foo/1/baz?qux=corge&quux=grault'))
-        .to.deep.equal({ bar: '1', qux: 'corge', quux: 'grault' });
+      pm.add({ path: '/foo/:bar/baz?qux&quux' }, onMatch);
+
+      pm.match('/foo/1/baz?qux=corge&quux=grault');
+
+      expect(onMatch.calledOnce).to.equal(true);
     });
 
 
