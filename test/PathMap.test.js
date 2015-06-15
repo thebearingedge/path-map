@@ -1,19 +1,26 @@
 'use strict';
 
-var expect;
-var chai = require('chai');
-
-expect = chai.expect;
-
+var expect = require('chai').expect;
 var PathMap = require('../PathMap');
 
 describe('PathMap', function () {
 
   var pm;
 
-  beforeEach(function () {
-    pm = new PathMap();
+  it('should not require `new`', function () {
+
+    var pathMap = require('../PathMap');
+
+    expect(pathMap() instanceof PathMap).to.equal(true);
   });
+
+
+  beforeEach(function () {
+
+    pm = new PathMap();
+
+  });
+
 
   describe('#add(route)', function () {
 
@@ -92,11 +99,11 @@ describe('PathMap', function () {
     });
 
 
-    it('should return `undefined` if no match is found', function () {
+    it('should return `null` if no match is found', function () {
 
       var notFound = pm.match('/not-found');
 
-      expect(notFound).to.equal(undefined);
+      expect(notFound).to.equal(null);
     });
 
   });

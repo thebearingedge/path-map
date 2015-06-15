@@ -1,7 +1,7 @@
 {
   "name": "path-map",
-  "version": "0.0.4",
-  "description": "",
+  "version": "1.0.0",
+  "description": "A basic route registry. Add routes. Get matches.",
   "main": "PathMap.js",
   "scripts": {
     "test": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha",
@@ -26,8 +26,6 @@
     "chai": "^3.0.0",
     "http-server": "^0.8.0",
     "istanbul": "^0.3.15",
-    "mocha": "^2.2.5",
-    "sinon": "^1.15.3",
-    "sinon-chai": "^2.8.0"
+    "mocha": "^2.2.5"
   }
 }

@@ -10,6 +10,8 @@ module.exports = PathMap;
 
 function PathMap() {
 
+  if (!(this instanceof PathMap)) return new PathMap();
+
   this.routes = {};
   this.pathMatchers = [];
 
@@ -66,6 +68,8 @@ PathMap.prototype.match = function (path) {
     return [route, params, query];
   }
 
+  return null;
+
 };
 
 
@@ -74,7 +78,7 @@ PathMap.prototype._createPathMatcher = function (route) {
   var pathOnly = lib.omitQueryString(route);
   var pattern = new UrlPattern(pathOnly);
   var queryKeys = lib.pathContainsQuery(route)
-    ? lib.getQueryKeys(lib.getQueryString(route))
+    ? lib.getRouteQueryKeys(lib.getQueryString(route))
     : undefined;
 
   return {

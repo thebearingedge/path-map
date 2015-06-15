@@ -1,3 +1,1 @@
-- decide if things are "routes" or "paths"
-- implement default path
-- handle matches
+- Make docs

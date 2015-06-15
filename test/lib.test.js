@@ -80,13 +80,13 @@ describe('lib', function () {
   });
 
 
-  describe('#getQueryKeys(routeQuery)', function () {
+  describe('#getRouteQueryKeys(routeQuery)', function () {
 
-    var routeQuery = 'bar&baz';
+    var routeQuery = 'foo&bar&baz';
 
-    var queryKeys = lib.getQueryKeys(routeQuery);
+    var queryKeys = lib.getRouteQueryKeys(routeQuery);
 
-    expect(queryKeys).to.deep.equal(['bar', 'baz']);
+    expect(queryKeys).to.deep.equal(['foo', 'bar', 'baz']);
   });
 
 
