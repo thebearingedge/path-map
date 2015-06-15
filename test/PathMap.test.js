@@ -2,10 +2,6 @@
 
 var expect;
 var chai = require('chai');
-var sinon = require('sinon');
-var sinonChai = require('sinon-chai');
-
-chai.use(sinonChai);
 
 expect = chai.expect;
 
@@ -21,75 +17,100 @@ describe('PathMap', function () {
 
   describe('#add(route)', function () {
 
-    it('should register a route object by path', function () {
-      var home = { path: '/home' };
+    it('should register a route', function () {
 
-      pm.add(home);
+      pm.add('/foo');
 
-      expect(pm.routes['/home']).to.equal(home);
+      expect(pm.routes['/foo']).not.to.equal(undefined);
     });
 
 
     it('should be chainable', function () {
 
-      expect(pm.add({ path: '/home' })).to.equal(pm);
+      expect(pm.add('/foo')).to.equal(pm);
     });
 
 
     it('should register a path matcher', function () {
 
-      pm.add({ path: '/foo' });
+      pm.add('/foo');
 
       expect(pm.pathMatchers.length).to.equal(1);
     });
 
 
-    it('should throw if the route does not have a path', function () {
+    it('should throw if the route is not a string', function () {
 
-      expect(pm.add.bind(pm, {}))
-        .to.throw(Error, 'routes must contain a string path');
+      expect(pm.add.bind(pm, null))
+        .to.throw(Error, 'route `null` must be a string');
     });
 
 
-    it('should throw if route path is already used', function () {
+    it('should throw if route is already added', function () {
 
-      pm.add({ path: '/foo' });
+      pm.add('/foo');
 
-      expect(pm.add.bind(pm, { path: '/foo?bar&baz' }))
-        .to.throw(
-          Error,
-          'cannot add path /foo?bar&baz - already added /foo'
-        );
+      expect(pm.add.bind(pm, '/foo?bar&baz'))
+        .to.throw(Error, 'cannot add path /foo?bar&baz - already added /foo');
     });
 
   });
 
 
-  describe('#match(route, onMatch)', function () {
+  describe('#match(path)', function () {
 
-    it('should call onMatch with route, params, and query', function () {
+    it('should return an array of route, params, and query', function () {
 
-      var onMatch = sinon.spy();
+      pm.add('/foo/:bar/baz');
+      pm.add('/corge/:grault');
 
-      pm.add({ path: '/foo/:bar/baz?qux&quux' }, onMatch);
+      var desired = [
+        '/foo/:bar/baz',
+        { bar: '1' },
+        { qux: 'corge' }
+      ];
 
-      pm.match('/foo/1/baz?qux=corge&quux=grault');
+      var actual = pm.match('/foo/1/baz?qux=corge');
 
-      expect(onMatch.calledOnce).to.equal(true);
+      expect(actual).to.deep.equal(desired);
     });
 
+
+    it('should filter query params if route has keys', function () {
+
+      pm.add('/foo/:bar/baz?qux');
+
+      var desired = [
+        '/foo/:bar/baz?qux',
+        { bar: '42' },
+        { qux: 'corge' }
+      ];
+
+      var actual = pm.match('/foo/42/baz?qux=corge&grault=garpley');
+
+      expect(actual).to.deep.equal(desired);
+    });
+
+
+    it('should return `undefined` if no match is found', function () {
+
+      var notFound = pm.match('/not-found');
+
+      expect(notFound).to.equal(undefined);
+    });
 
   });
 
 
-  describe('#_createPathMatcher(path)', function () {
+  describe('#_createPathMatcher(route)', function () {
 
     it('should create path matcher', function () {
 
-      var matcher = pm._createPathMatcher('/foo/:bar/baz');
+      var matcher = pm._createPathMatcher('/foo/:bar/baz?qux');
 
-      expect(matcher.path).to.equal('/foo/:bar/baz');
+      expect(matcher.route).to.equal('/foo/:bar/baz?qux');
       expect(typeof matcher.match).to.equal('function');
+      expect(matcher.queryKeys.length).to.equal(1);
     });
 
 
@@ -101,59 +122,5 @@ describe('PathMap', function () {
     });
 
   });
-
-
-  describe('#_getQueryParams(path)', function () {
-
-    it('should return a params object from query string', function () {
-
-      expect(pm._getQueryParams('/foo?bar=baz&qux=quux'))
-        .to.deep.equal({ bar: 'baz', qux: 'quux' });
-    });
-
-  });
-
-
-  describe('#_getQuery(path)', function () {
-
-    it('should return the query portion of a path', function () {
-
-      expect(pm._getQuery('/foo?bar&baz')).to.equal('bar&baz');
-    });
-
-  });
-
-
-  describe('#_hasQuery(path)', function () {
-
-    it('should return `true` if path has query string', function () {
-
-      expect(pm._hasQuery('/foo?bar')).to.equal(true);
-    });
-
-
-    it('should return `false` if path does not have query string', function () {
-
-      expect(pm._hasQuery('/foo')).to.equal(false);
-    });
-
-  });
-
-
-  describe('#_omitQuery(path)', function () {
-
-    it('should return the path unchanged', function () {
-
-      expect(pm._omitQuery('/foo')).to.equal('/foo');
-    });
-
-
-    it('should return the path without its query', function () {
-
-      expect(pm._omitQuery('/foo?bar&baz')).to.equal('/foo');
-    });
-
-  });
-
 
 });
